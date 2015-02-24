@@ -9,11 +9,11 @@
 * A Node is an element of the program
 * Programs will be stored as a tree using Nodes
 * Parameters:
-*    - description: the type of program element (e.g. "WhileStatement")
+*    - elementName: the type of program element (e.g. "WhileStatement")
 *    - children: array of Nodes representing elements inside the current Node
 */
-var Node = function(description) {
-  this.description = description;
+var Node = function(elementName) {
+  this.elementName = elementName;
   this.children = [];
 }
 
@@ -27,6 +27,7 @@ var Node = function(description) {
 function createProgramTree(currentNode, acornObj) {
   // if program element has children (stored in 'body' or 'consequent')
   if (acornObj['body'] || acornObj['consequent']) {
+    
     var childrenElements = acornObj['consequent'] ? acornObj['consequent'] : acornObj['body'];
     
     // if children are stored in an array, loop through all children
@@ -35,7 +36,7 @@ function createProgramTree(currentNode, acornObj) {
         var currentChild = childrenElements[i];
         var child = new Node(currentChild['type']);
         currentNode.children.push(child);
-        createProgramTree(child, childrenElements[i]);
+        createProgramTree(child, currentChild);
       }
     } 
     
@@ -55,20 +56,53 @@ function createProgramTree(currentNode, acornObj) {
 
 
 /**
-* Uses Acorn to store a program as a tree
-* Each node consists of: 
-*   - a description (e.g. "WhileStatement")
-*   - an array of child nodes
+* Uses Acorn to store a program as a tree in a root node
 */
 function parseCode(code) {
   var root = new Node(""); // root node of the program
-  return createProgramTree(root, acorn.parse(code));
+  createProgramTree(root, acorn.parse(code));
+  return root;
 }
 
-// Checks to see if the program has all of the required elements
-// Returns an array with any possible errors
-function checkWhitelist(code, whitelist) {
-  
+
+/**
+* Checks to see if the program has all of the required elements
+* Returns all required elements that are not in the program
+* Parameters:
+*   - node: the root node of a tree representing the program
+*   - whitelist: an array of elements the program must contain
+*/
+function checkWhitelist(node, whitelist) {
+  // validation?
+
+  if (typeof whitelist === 'undefined') {
+    return whitelist;
+  }
+
+  var index = whitelist.indexOf(node.elementName);
+  if (index != -1) {
+    whitelist.splice(index, 1);
+  }
+
+  if (node.children.length != 0) {
+    for (var i = 0; i < node.children.length; i++) {
+      whitelist = checkWhitelist(node.children[i], whitelist);
+    }
+  }
+
+  return whitelist;
+}
+
+
+/**
+* Checks to see if the program has all of the required elements
+* Returns true if the program meets whitelisted requirements, false if not
+* Parameters:
+*   - code: a tree of nodes representing the program
+*   - whitelist: an array of elements the program must contain
+*/
+function passesWhitelist(code, whitelist) {
+  return checkWhitelist(code, whitelist).length == 0;
 }
 
 
@@ -87,5 +121,5 @@ function checkStructure(code, structure) {
 
 
 function checkAllRules(code, whitelist, blacklist, structure) {
-  
+
 }
