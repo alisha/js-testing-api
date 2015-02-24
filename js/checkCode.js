@@ -106,10 +106,41 @@ function passesWhitelist(code, whitelist) {
 }
 
 
-// Checks to see if the program has any of the blacklisted elements
-// Returns an array with any possible errors
-function checkBlacklist(code, blacklist) {
+/**
+* Checks to see if the program has any of the prohibited elements
+* Returns all blacklisted elements that are in the program
+* Parameters:
+*   - node: the root node of a tree representing the program
+*   - blacklist: an array of elements the program must not have
+*   - errors: an array of blacklisted elements in the program
+*             should be passed as an empty array; used inside the function only
+*/
+function checkBlacklist(node, blacklist, errors) {
+  // validation?
 
+  if (blacklist.indexOf(node.elementName) != -1) {
+    errors.push(node.elementName);
+  }
+
+  if (node.children.length != 0) {
+    for (var i = 0; i < node.children.length; i++) {
+      errors = checkBlacklist(node.children[i], blacklist, errors);
+    }
+  }
+
+  return errors;
+}
+
+
+/**
+* Checks to see if the program has any of the prohibited elements
+* Returns true if the program doesn't have any blacklisted elements, false otherwise
+* Parameters:
+*   - code: a tree of nodes representing the program
+*   - blacklist: an array of elements the program must not have
+*/
+function passesBlacklist(code, blacklist) {
+  return checkWhitelist(code, blacklist, []).length == 0;
 }
 
 
