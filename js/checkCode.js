@@ -57,6 +57,9 @@ function createProgramTree(currentNode, acornObj) {
 
 /**
 * Uses Acorn to store a program as a tree in a root node
+* Returns the root node of the tree
+* Parameters:
+*   - code: the string of JavaScript to be parsed
 */
 function parseCode(code) {
   var root = new Node(""); // root node of the program
@@ -98,22 +101,22 @@ function checkWhitelist(node, whitelist) {
 * Checks to see if the program has all of the required elements
 * Returns true if the program meets whitelisted requirements, false if not
 * Parameters:
-*   - code: a tree of nodes representing the program
+*   - node: the root node of a tree representing the program
 *   - whitelist: an array of elements the program must contain
 */
-function passesWhitelist(code, whitelist) {
-  return checkWhitelist(code, whitelist).length == 0;
+function passesWhitelist(node, whitelist) {
+  return checkWhitelist(node, whitelist).length == 0;
 }
 
 
 /**
 * Returns an array of error messages for missing whitelist elements
 * Parameters:
-*   - code: a tree of nodes representing the program
+*   - node: the root node of a tree representing the program
 *   - whitelist: an array of elements the program must contain
 */
-function whitelistErrors(code, whitelist) {
-  var elements = checkWhitelist(code, whitelist);
+function whitelistErrors(node, whitelist) {
+  var elements = checkWhitelist(node, whitelist);
   
   if (typeof elements == 'undefined' || elements.length === 0) {
     elements = ["Your program includes all of the required elements! Hooray!"];
@@ -157,22 +160,22 @@ function checkBlacklist(node, blacklist, errors) {
 * Checks to see if the program has any of the prohibited elements
 * Returns true if the program doesn't have any blacklisted elements, false otherwise
 * Parameters:
-*   - code: a tree of nodes representing the program
+*   - node: the root node of a tree representing the program
 *   - blacklist: an array of elements the program must not have
 */
-function passesBlacklist(code, blacklist) {
-  return checkWhitelist(code, blacklist, []).length == 0;
+function passesBlacklist(node, blacklist) {
+  return checkWhitelist(node, blacklist, []).length == 0;
 }
 
 
 /**
 * Returns an array of error messages for present blacklisted elements
 * Parameters:
-*   - code: a tree of nodes representing the program
+*   - node: the root node of a tree representing the program
 *   - blacklist: an array of elements the program must not have
 */
-function blacklistErrors(code, blacklist) {
-  var elements = checkBlacklist(code, blacklist, []);
+function blacklistErrors(node, blacklist) {
+  var elements = checkBlacklist(node, blacklist, []);
   
   if (typeof elements == 'undefined' || elements.length === 0) {
     elements = ["Your program does not include any of prohibited elements! Go you!"];
@@ -186,8 +189,13 @@ function blacklistErrors(code, blacklist) {
 }
 
 
-// Checks to see if the program matches the required structure
-// Returns true if meets the structure
+/**
+* Checks to see if the program matches the required structure
+* Returns true if meets the structure
+* Parameters:
+*   - node: the root node of a tree representing the program
+* Note: this function is not completely working
+*/
 function checkStructure(node, structure) {
   if (node.elementName == structure.elementName) {
     for (var i = 0; i < node.children.length; i++) {
@@ -200,13 +208,12 @@ function checkStructure(node, structure) {
 
 
 /**
-* Returns an array of error messages for the whitelist, blacklist, and structure
+* Returns an array of error messages for the whitelisted and blacklisted elements
 * Parameters:
-*   - code: a tree of nodes representing the program
+*   - node: the root node of a tree representing the program
 *   - whitelist: an array of elements the program must contain
 *   - blacklist: an array of elements the program must not have
-*   - structure: a tree of nodes representing the required program structure
 */
-function allErrors(code, whitelist, blacklist) {
-  return whitelistErrors(code, whitelist).concat(blacklistErrors(code, blacklist));
+function allErrors(node, whitelist, blacklist) {
+  return whitelistErrors(node, whitelist).concat(blacklistErrors(node, blacklist));
 }
