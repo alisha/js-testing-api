@@ -107,6 +107,27 @@ function passesWhitelist(code, whitelist) {
 
 
 /**
+* Returns an array of error messages for missing whitelist elements
+* Parameters:
+*   - code: a tree of nodes representing the program
+*   - whitelist: an array of elements the program must contain
+*/
+function whitelistErrors(code, whitelist) {
+  var elements = checkWhitelist(code, whitelist);
+  
+  if (typeof elements == 'undefined' || elements.length === 0) {
+    elements = ["Your program includes all of the required elements! Hooray!"];
+  } else {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i] = "The program does not include a(n) " + elements[i];
+    }
+  }
+
+  return elements;
+}
+
+
+/**
 * Checks to see if the program has any of the prohibited elements
 * Returns all blacklisted elements that are in the program
 * Parameters:
@@ -144,13 +165,48 @@ function passesBlacklist(code, blacklist) {
 }
 
 
-// Checks to see if the program matches the required structure
-// Returns an array with any possible errors
-function checkStructure(code, structure) {
+/**
+* Returns an array of error messages for present blacklisted elements
+* Parameters:
+*   - code: a tree of nodes representing the program
+*   - blacklist: an array of elements the program must not have
+*/
+function blacklistErrors(code, blacklist) {
+  var elements = checkBlacklist(code, blacklist, []);
+  
+  if (typeof elements == 'undefined' || elements.length === 0) {
+    elements = ["Your program does not include any of prohibited elements! Go you!"];
+  } else {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i] = "The program should not include a(n) " + elements[i];
+    }
+  }
 
+  return elements;
 }
 
 
-function checkAllRules(code, whitelist, blacklist, structure) {
+// Checks to see if the program matches the required structure
+// Returns true if meets the structure
+function checkStructure(node, structure) {
+  if (node.elementName == structure.elementName) {
+    for (var i = 0; i < node.children.length; i++) {
+      for (var j = 0; j < structure.children.length; j++) {
+        checkStructure(node.children[i], structure.children[j]);
+      }
+    }
+  }
+}
 
+
+/**
+* Returns an array of error messages for the whitelist, blacklist, and structure
+* Parameters:
+*   - code: a tree of nodes representing the program
+*   - whitelist: an array of elements the program must contain
+*   - blacklist: an array of elements the program must not have
+*   - structure: a tree of nodes representing the required program structure
+*/
+function allErrors(code, whitelist, blacklist) {
+  return whitelistErrors(code, whitelist).concat(blacklistErrors(code, blacklist));
 }

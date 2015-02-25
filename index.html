@@ -3,15 +3,52 @@
 
   <head>
     <title>JS Code Tester</title>
+
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
 
   <body>
-    <h1>JavaScript Code Tester</h1>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>JavaScript Code Tester</h1>
+
+        <div class="col-md-8">
+          <h2>Challenge</h2>
+          <p>Store all even numbers from 0 to 9 (inclusive) in an array called <code>even_numbers</code></p>
+        </div>
+          
+        <div class="col-md-4">
+          <h2>Requirements</h2>
+          <ul>
+            <li>You <b>must</b> have a for-loop and if statement</li>
+            <li>You <b>must not</b> have a while-loop</li>
+          </ul>
+        </div>
+
+        <div class="col-md-8">
+          <h2>Editor</h2>
+          <div id="editor"></div>
+        </div>
+
+        <div class="col-md-4">
+          <h2>Feedback</h2>
+          <div id="feedback">
+            <p>Type in the editor for some feedback!</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="js/prettyPrint.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <script src="js/ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
     <script type="text/javascript" src="js/acorn/acorn.js"></script>
     <script type="text/javascript" src="js/checkCode.js"></script>
+    <script type="text/javascript" src="js/feedback.js"></script>
   </body>
 
 </html>
